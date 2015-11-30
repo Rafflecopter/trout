@@ -10,10 +10,10 @@ DO NOT USE IN PRODUCTION. Trout is a work in progress. Some things are missing/b
 Trout is a bi-directional "routes are data"
 route matching/lookup library for ClojureScript that aims to be intuitive to use.
 
-- Embraces Express-style route [syntax](#route-syntax).
-- Routes are just data - even ones created via route-strings.<br>
+- Embraces route [syntax](#route-syntax).
+- Routes are just vectors - even ones created via route-strings.<br>
   Extend & compose them to your heart's content.
-- No keeping track of routes for you. No `def`s or macros necessary.
+- No keeping track of routes for you. No `defroute`s or macros necessary.
 - Routes can be "nested" a la compojure's `context`
 - Uses [Schema](https://github.com/Prismatic/schema) for parameter type conversion
 
@@ -64,15 +64,15 @@ Test a route against some paths:
   )
 ```
 
-Get the parsed parameters:
+Extract the parameters:
 
 ```clojure
 (let [route (t/route "/user/:user-id/dirs/:dirname")]
 
-  (t/parse route "/user/123/dirs/foobar") ;;=> {:user-id "123", :dirname "foobar"}
-  (t/parse route "/user/xyz/dirs/789")    ;;=> {:user-id "xyz", :dirname "789"}
+  (t/match route "/user/123/dirs/foobar") ;;=> {:user-id "123", :dirname "foobar"}
+  (t/match route "/user/xyz/dirs/789")    ;;=> {:user-id "xyz", :dirname "789"}
 
-  (t/parse route "/not/a/valid/match")    ;;=> nil
+  (t/match route "/not/a/valid/match")    ;;=> nil
   )
 ```
 
@@ -83,10 +83,10 @@ Test multiple routes at once:
               (t/route ["user" :id "settings"])]]  ;; vector syntax
 
   (t/matches? routes "/user/123/settings") ;;=> true
-  (t/parse routes "/user/123")             ;;=> {:id "123"}
+  (t/match routes "/user/123")             ;;=> {:id "123"}
 
   (t/matches? routes "/user/settings")     ;;=> false
-  (t/parse routes "/log-me-in")            ;;=> nil
+  (t/match routes "/log-me-in")            ;;=> nil
   )
 ```
 
@@ -222,12 +222,16 @@ One or more
    (route ["foo" [:bar #(\d+)]])) ;;=> true
 ```
 
+> Note: make sure to enclose your pattern in parens
+
 #### Unnamed Parameters
 
 ```clojure
 (= (route "/foo/(.*)")
-   (route ["foo" #(.*)])) ;;=> true
+   (route ["foo" #"(.*)"])) ;;=> true
 ```
+
+> Note: make sure to enclose your pattern in parens
 
 #### Asterisk
 
@@ -256,6 +260,13 @@ You can configure various aspects of Trout by `set!`ing the variables in `trout.
 (set! ts/*navigator* (fn [path-str]
                        (.replace js/location path-str)))
 ```
+
+## Development
+
+Get a clj repl with `lein repl` and then a cljs repl with `(node-repl)`
+
+Run tests with `lein doo node [once]`.
+
 
 ## Links
 

@@ -78,7 +78,9 @@
         vec)))
 
 
-;; API
+;;;; API
+
+;; Make a route
 
 (defn route [path]
   (cond
@@ -87,8 +89,14 @@
     (string? path) (r/Route. (str->pathv path) nil)
     :else (throw (str "Routes can only be made from strings or collections. Instead, path is a " (type path)))))
 
+
+;; Match a route or routes
+
+(defn match [-route path]
+  (r/match -route path))
+
 (defn matches? [-route path]
-  (r/matches? -route path))
+  (some? (r/match -route path)))
 
 (defn ->str [-route & [{:as argv}]]
   (r/path-str -route argv))

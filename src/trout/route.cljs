@@ -29,23 +29,29 @@
 
 (defn- segment->varname [i x]
   (cond (string? x)   nil
-        (keyword? x) (or (namespace x) (name x))
+        (keyword? x) (keyword (or (namespace x) (name x)))
         (vector? x)  (first x)
         (= '* x)     i
         (regexp? x)  i))
+
+(defn- pathv->varnames [pathv]
+  (->> pathv
+       (remove string?)
+       (map-indexed segment->varname)))
 
 (defn pathv->regexp [pathv]
   (->> pathv
        (#(map segment->pattern %))
        (apply str)
-       with-trailing-slash
+       (with-trailing-slash)
        (#(str "^" % "$"))
-       re-pattern))
+       (re-pattern)))
 
 
 (defprotocol IRoute
+  (-regexp [this])
   (path-str [this args])
-  (matches? [this path]))
+  (match [this path]))
 
 (deftype Route [pathv ^:mutable __regex]
   Object
@@ -55,18 +61,23 @@
     (-equiv pathv other))
 
   IRoute
-  (path-str [_ args]
-    "// TODO //")
-  (matches? [_ path]
-    ;; Regex is lazily computed, and then cached. All methods that
-    ;; result in a new route also set the regex to nil again so that
-    ;; it will be re-computed.
+  (-regexp [_]
     (let [r __regex]
-      (if-not (nil? r)
-        (some? (re-matches __regex path))
+      ;; Regex is lazily computed, and then cached. All methods that
+      ;; result in a new route also set the regex to nil again so that
+      ;; it will be re-computed.
+      (if (nil? r)
         (let [r (pathv->regexp pathv)]
           (set! __regex r)
-          (some? (re-matches __regex path))))))
+          r)
+        r)))
+  (path-str [_ args]
+    "// TODO //")
+  (match [this path]
+    (when-let [found (re-matches (-regexp this) path)]
+      (let [names (pathv->varnames pathv)
+            vals (rest found)]
+        (zipmap names vals))))
 
   ICloneable
   (-clone [_] (Route. pathv __regex))
