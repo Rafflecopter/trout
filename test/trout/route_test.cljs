@@ -7,18 +7,18 @@
   (testing "Produces equivalent regexes to path-to-regexp"
     ;; TODO: perhaps we could bring in path-to-regexp as a dependency
     ;;       and then calculate the correct regexes dynamically
-    (let [correct [["/foo"        "^/foo(?:/(?=$))?$"]
-                   ["/:foo"       "^/([^/]+?)(?:/(?=$))?$"]
-                   ["/:foo?"      "^(?:/([^/]+?))?(?:/(?=$))?$"]
-                   ["/:foo*"      "^(?:/([^/]+?(?:/[^/]+?)*))?(?:/(?=$))?$"]
-                   ["/:foo+"      "^/([^/]+?(?:/[^/]+?)*)(?:/(?=$))?$"]
-                   ["/:foo(\\d+)" "^/(\\d+)(?:/(?=$))?$"]
-                   ["/(.*)"       "^/(.*)(?:/(?=$))?$"]
-                   ["/*"          "^/(.*)(?:/(?=$))?$"]
-                   ["/foo/:bar/:quest?/:star*/:plus+/:re(\\d+)/([.]+)/*/-fin"
+    (let [correct [[["foo"]           "^/foo(?:/(?=$))?$"]
+                   [[:foo]            "^/([^/]+?)(?:/(?=$))?$"]
+                   [[:foo/?]          "^(?:/([^/]+?))?(?:/(?=$))?$"]
+                   [[:foo/*]          "^(?:/([^/]+?(?:/[^/]+?)*))?(?:/(?=$))?$"]
+                   [[:foo/+]          "^/([^/]+?(?:/[^/]+?)*)(?:/(?=$))?$"]
+                   [[[:foo #"(\d+)"]] "^/(\\d+)(?:/(?=$))?$"]
+                   [[#"(.*)"]         "^/(.*)(?:/(?=$))?$"]
+                   [['*]              "^/(.*)(?:/(?=$))?$"]
+                   [["foo" :bar :quest/? :star/* :plus/+ [:re #"(\d+)"] #"([.]+)" '* "-fin"]
                     "^/foo/([^/]+?)(?:/([^/]+?))?(?:/([^/]+?(?:/[^/]+?)*))?/([^/]+?(?:/[^/]+?)*)/(\\d+)/([.]+)/(.*)/-fin(?:/(?=$))?$"]]]
       (doseq [[src canonical] correct]
-        (is (= (.-source (tr/pathv->regexp (.-pathv (t/route src))))
+        (is (= (.-source (tr/pathv->regexp src))
                (.-source (re-pattern canonical))))))))
 
 (deftest params

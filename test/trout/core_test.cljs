@@ -18,8 +18,8 @@
         "/user/:id/settings/:page"))))
 
 (deftest route-string-parsing
+  ;; TODO: add lots more assertions (convert the p-t-r test suite?)
   (testing "Basic route strings parse correctly"
-    ;; TODO: add lots more assertions (convert the p-t-r test suite?)
     (are [x y] (= (un-rx (t/str->pathv x)) (un-rx y))
       "/foo"            ["foo"]
       "/foo/:bar"       ["foo" :bar]
