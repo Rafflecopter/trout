@@ -26,7 +26,7 @@
    (re npbase "\\+$")        #(keyword % "+")               ; one or more
    (re npbase "(\\(.*\\))$") #(vector (keyword %1) (re %2)) ; custom match pattern
    #"(^\(.*\)$)"             #(re-pattern %)                ; unnamed param
-   #"^\*$"                   #(re-pattern "(.*)")           ; shorthand unnamed param
+   #"^\*$"                   #(symbol "*")                  ; shorthand unnamed param
    })
 
 
@@ -36,7 +36,7 @@
   (re-pattern cfg/*path-separator*))
 
 (defn- not-separator-regexp []
-  (re-pattern (str "\\((.*)" cfg/*path-separator* "(.*)\\)")))
+  (re-pattern (str "\\(([^)]*?)" cfg/*path-separator* "([^(]*?)\\)")))
 
 (defn- de-sentinel [x]
   (string/replace x #"\^\^\^" cfg/*path-separator*))
@@ -48,7 +48,7 @@
             str-conversions)
       s))
 
-(defn- str->pathv [s]
+(defn str->pathv [s]
   (let []
     (-> s
         ;; Replace inline occurances of path separator that are not
@@ -110,4 +110,3 @@
     (try (cfg/*navigator* path)
          (catch js/Object e
            (.log js/console "Cannot navigate!")))))
-
