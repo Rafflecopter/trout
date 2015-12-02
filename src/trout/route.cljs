@@ -35,9 +35,15 @@
         (regexp? x)  i))
 
 (defn- pathv->varnames [pathv]
-  (->> pathv
-       (remove string?)
-       (map-indexed segment->varname)))
+  (loop [pathv pathv
+         names []
+         i 0]
+    (if-not (empty? pathv)
+      (let [name (segment->varname i (first pathv))]
+        (recur (rest pathv)
+               (conj names name)
+               (if (number? name) (inc i) i)))
+      names)))
 
 (defn pathv->regexp [pathv]
   (->> pathv
