@@ -59,3 +59,24 @@
         "/test"  {0 "test"}
         "/a/b/c" {0 "a/b/c"}
         ""       nil))))
+
+(deftest string-generation
+  (testing "Correctly generates path strings from route + arguments"
+    (are [x y z] (= x (tr/path-str (tr/Route. y nil) z))
+      "/foo/123"   ["foo" :id]            {:id 123}
+      "/foo/123"   ["foo" :id/?]          {:id 123}
+      "/foo/"      ["foo" :id/?]          {}
+      "/foo/1/2/3" ["foo" :id/*]          {:id [1 2 3]}
+      "/foo/1/2/3" ["foo" :id/+]          {:id [1 2 3]}
+      "/foo/123"   ["foo" [:id #"(\d+)"]] {:id 123}
+      "/foo/123"   ["foo" [:id #"(\d+)"]] {:id "123"}
+      "/foo/123"   ["foo" #"(\d+)"]       {0 123}
+      "/foo/123"   ["foo" '*]             {0 123}
+      ))
+  (testing "Correctly throws when generating strings with invalid arguments"
+    (are [x y] (thrown? js/TypeError (tr/path-str (tr/Route. x nil) y))
+      [:id] {:id [1 2 3]} ; expected not to repeat
+      [:id] {}            ; expected to be defined
+      [:id/+] {:id []}    ; expected to not be empty
+      [#"foo"] {0 "faa"}  ; expected to match
+      )))

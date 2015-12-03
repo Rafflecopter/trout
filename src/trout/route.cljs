@@ -1,6 +1,7 @@
 (ns trout.route
   (:require [clojure.string :as string]
-            [trout.settings :as cfg]))
+            [trout.settings :as cfg]
+            [trout.generate :as gen]))
 
 
 (defn- with-trailing-slash [s]
@@ -77,11 +78,14 @@
           (set! __regex r)
           r)
         r)))
-  (path-str [_ args]
-    "// TODO //")
+  (path-str [this args]
+    (let [names (pathv->varnames pathv)
+          segnames (map vector pathv names) ;; [[segment varname], ...]
+          ->str (partial gen/segment->str args)]
+      (string/join (map ->str segnames))))
   (match [this path]
     (when-let [found (re-matches (-regexp this) path)]
-      (let [names (pathv->varnames pathv)
+      (let [names (remove nil? (pathv->varnames pathv))
             vals (rest found)]
         (zipmap names vals))))
 
