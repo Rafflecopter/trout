@@ -10,12 +10,40 @@ DO NOT USE IN PRODUCTION. Trout is a work in progress. Some things are missing/b
 Trout is a bi-directional "routes are data"
 route matching/lookup library for ClojureScript that aims to be intuitive to use.
 
-- Embraces route [syntax](#route-syntax).
-- Routes are just vectors - even ones created via route-strings.<br>
+- Route [syntax](#route-syntax) inspired by Express, et al.
+- Routes are just vectors - even ones created via strings.<br>
   Extend & compose them to your heart's content.
-- No keeping track of routes for you. No `defroute`s or macros necessary.
+- No keeping track of routes for you; no macros necessary.
 - Routes can be "nested" a la compojure's `context`
 - Uses [Schema](https://github.com/Prismatic/schema) for parameter type conversion
+
+## TL;DR
+
+##### Syntax [...](#route-syntax)
+```clojure
+"/foo"            ["foo"]                  ; string path segment 
+"/foo/:bar"       ["foo" :bar]             ; named parameter
+"/foo/:bar?"      ["foo" :bar/?]           ; named parameter (optional)
+"/foo/:bar*"      ["foo" :bar/*]           ; named parameter (zero or more)
+"/foo/:bar+"      ["foo" :bar/+]           ; named parameter (one or more)
+"/foo/:bar(\\d+)" ["foo" [:bar #"(\d+)"]]  ; named parameter w/ custom pattern
+"/foo/(.*)"       ["foo" #"(.*)"]          ; unnamed parameter
+"/foo/*"          ["foo" '*]               ; unnamed parameter (shorthand for (.*))
+```
+
+##### Usage [...](#usage)
+
+```clojure
+(require '[trout.core :as t])
+
+(def my-route (t/route "/user/:user-id/invoices/:invoice-id(inv-\d+)"))
+
+(t/matches? my-route "/user/abc123/invoices/inv-456") ;;=> true
+(t/match my-route "/user/abc123/invoices/inv-456")    ;;=> {:user-id "abc123", :invoice-id "456"}
+
+(t/->str my-route {:user-id "xyz789"
+                   :invoice-id "inv-123"})   ;;=> "/user/xyz789/invoices/inv-123
+```
 
 
 ## Usage
@@ -90,18 +118,45 @@ Test multiple routes at once:
   )
 ```
 
-#### Generating
+#### Generating Strings
 
 You can generate a string from a route + arguments:
 
 ```clojure
 (let [route (t/route "/user/:id")]
 
-  (t/->str route {:id 123}) ;;=> "/user/123"
+  (t/->str route {:id "123"}) ;;=> "/user/123"
+  (t/->str route {:id 123})   ;;=> "/user/123"
   )
 ```
 
-#### Navigating
+Invalid input will throw a `js/TypeError`:
+
+```clojure
+(let [route (t/route "/user/:id(\d+)")]
+
+  (t/->str route {})           ;;=> throws js/TypeError
+  (t/->str route {:id "xyz"})  ;;=> throws js/TypeError
+  )
+```
+
+Modifiers like optional & repeat are respected:
+
+```clojure
+(let [route (t/route "/user/:uid(\d+)/~/:folder-name+/:filename?")]
+  
+  (t/->str route {:uid 123
+                  :folder-name ["docs" "invoices"]  ;;=> "/user/123/~/docs/invoices/Jan2015.pdf"
+                  :filename "Jan2015.pdf"})
+
+  (t/->str route {:uid 123
+                  :folder-name []                   ;;=> throws js/TypeError (folder-name is empty)
+                  :filename "whoops.pdf"})
+  )
+```
+
+
+#### Miscellany
 
 Trout can change the browser's location for you:
 
@@ -111,9 +166,6 @@ Trout can change the browser's location for you:
   (t/navigate! route {:id 123})  ;;=> document location will be ".../user/123"
   )
 ```
-
-#### Miscellany
-
 
 To match against a whole URL instead of a relative path:
 
@@ -129,17 +181,7 @@ You can also match against `js/Location` objects:
 
   (t/matches? route loc) ;;=> true
   )
-```
-
-Get the actual route that matched:
-
-```clojure
-(let [routes {:usr (t/route "/user/:id")}]
-
-  (t/match routes "/user/123")        ;;=> #object[trout.core.Route]
-  (str (t/match routes "/user/123"))) ;;=> "/user/:id"
-```
-
+```    
 
 ### Maps
 
@@ -263,7 +305,7 @@ You can configure various aspects of Trout by `set!`ing the variables in `trout.
 
 ## Development
 
-Get a clj repl with `lein repl` and then a cljs repl with `(node-repl)`
+Get a clj repl with `lein repl` and then a cljs repl with `(node-repl)` or `(ws-repl)` (browser)
 
 Run tests with `lein doo node [once]`.
 
@@ -288,3 +330,6 @@ File an issue or pull-request at http://github.com/Rafflecopter/trout
 #### Notes:
 
 <a name="1">1</a>: Right now we're aiming for "mostly-compatible", but might try to provide rigorous support in the future. PR's welcome ;)
+
+
+[route-syntax]: https://github.com/pillarjs/path-to-regexp
