@@ -33,7 +33,7 @@
 ;; Helpers
 
 (defn- separator-regexp []
-  (re-pattern cfg/*path-separator*))
+  (re-pattern (string/replace cfg/*path-separator* #"([.+*?=^!:${}()\[\]|\/])" "\\$1")))
 
 (defn- not-separator-regexp []
   (re-pattern (str "\\(([^)]*?)" cfg/*path-separator* "([^(]*?)\\)")))
@@ -80,8 +80,6 @@
 
 ;;;; API
 
-;; Make a route
-
 (defn route [path]
   (cond
     (vector? path) (r/Route. path nil)
@@ -90,23 +88,21 @@
     :else (throw (str "Routes can only be made from strings or collections. Instead, path is a " (type path)))))
 
 
-;; Match a route or routes
-
 (defn match [-route path]
   (r/match -route path))
 
 (defn matches? [-route path]
   (some? (r/match -route path)))
 
-(defn ->str [-route & [{:as argv}]]
-  (r/path-str -route argv))
 
-(defn route-map [m]
-  {})
+(defn ->str [-route & [{:as argv}]]
+  (r/path-str -route (or argv {})))
 
 (defn navigate! [-route & [args]]
-  {:pre [(implements? -route r/IRoute)]}
-  (let [path (.path-str -route args)]
+  (let [path (r/path-str -route args)]
     (try (cfg/*navigator* path)
          (catch js/Object e
            (.log js/console "Cannot navigate!")))))
+
+(defn route-map [m]
+  {})

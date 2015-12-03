@@ -6,13 +6,14 @@
 
 (defn- with-trailing-slash [s]
   (if cfg/*allow-trailing-slashes*
-    (str s "(?:" cfg/*path-separator* "(?=$))?")))
+    (str s "(?:" cfg/*path-separator* "(?=$))?")
+    s))
 
 (defn- sep+ [& xs]
   (str cfg/*path-separator* (apply str xs)))
 
 (defn- kw->pattern [kw]
-  (let [pattern "[^\\/]+?"]
+  (let [pattern (str "[^" cfg/*path-separator* "]+?")]
     (if-not (namespace kw)
       (sep+ "(" pattern ")")
       (condp = (name kw)
@@ -79,7 +80,8 @@
           r)
         r)))
   (path-str [this args]
-    (let [names (pathv->varnames pathv)
+    (let [args (or args {})
+          names (pathv->varnames pathv)
           segnames (map vector pathv names) ;; [[segment varname], ...]
           ->str (partial gen/segment->str args)]
       (string/join (map ->str segnames))))

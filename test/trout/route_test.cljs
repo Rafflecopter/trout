@@ -66,7 +66,10 @@
       "/foo/123"   ["foo" :id]            {:id 123}
       "/foo/123"   ["foo" :id/?]          {:id 123}
       "/foo/"      ["foo" :id/?]          {}
+      "/foo/"      ["foo" :id/?]          nil
       "/foo/1/2/3" ["foo" :id/*]          {:id [1 2 3]}
+      "/foo/"      ["foo" :id/*]          {:id []}
+      "/foo/"      ["foo" :id/*]          {}
       "/foo/1/2/3" ["foo" :id/+]          {:id [1 2 3]}
       "/foo/123"   ["foo" [:id #"(\d+)"]] {:id 123}
       "/foo/123"   ["foo" [:id #"(\d+)"]] {:id "123"}
