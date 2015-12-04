@@ -15,7 +15,6 @@ route matching/lookup library for ClojureScript that aims to be intuitive to use
   Extend & compose them to your heart's content.
 - No keeping track of routes for you; no macros necessary.
 - Routes can be "nested" a la compojure's `context`
-- Uses [Schema](https://github.com/Prismatic/schema) for parameter type conversion
 
 ## TL;DR
 
@@ -61,9 +60,7 @@ Make a simple route:
 (t/route ["user" :id]) ;; equivalent route in vector notation
 ```
 
-#### Routes are Vectors
-
-... do vector things to them:
+Routes are vectors. Do vector things to them:
 
 ```clojure
 (let [route (t/route "/user/:id/settings")]
@@ -118,6 +115,34 @@ Test multiple routes at once:
   )
 ```
 
+#### Route Handlers
+
+Trout can call route handlers for you, provided a map of routes and a matching map of handlers. Handlers will be passed the parsed parameters as a map:
+
+```clojure
+(let [routes {:home (t/route "/home/:page-id"),
+              :user (t/route "/user/:user-id")}
+      handlers {:home #(js/alert (str "Welcome to page " (:page-id %)))
+                :user #(js/alert (str "Welcome, User " (:user-id %)))}]
+
+  (t/handle! routes handlers "/home/pricing")  ;;=> Welcome to page pricing
+  (t/handle! routes handlers "/user/abc-123")  ;;=> Welcome, User abc-123
+  )
+```
+
+You can use indexed collections instead of maps:
+
+```clojure
+(let [routes [(t/route "/home/:page-id"),
+              (t/route "/user/:user-id")]
+      handlers [#(js/alert (str "Welcome to page " (:page-id %)))
+                #(js/alert (str "Welcome, User " (:user-id %)))]]
+
+  (t/handle! routes handlers "/home/pricing")  ;;=> Welcome to page pricing
+  (t/handle! routes handlers "/user/abc-123")  ;;=> Welcome, User abc-123
+  )
+```
+
 #### Generating Strings
 
 You can generate a string from a route + arguments:
@@ -155,7 +180,6 @@ Modifiers like optional & repeat are respected:
   )
 ```
 
-
 #### Miscellany
 
 Trout can change the browser's location for you:
@@ -183,43 +207,10 @@ You can also match against `js/Location` objects:
   )
 ```    
 
-### Maps
-
-When matching multiple routes, you can use maps instead of seqs. Trout will match against `(vals x)`:
+### Handlers
 
 ```clojure
-(let [routes {:usr      (t/route "/user/:id")
-              :my-route (t/route ["user" :id "settings"])}]
-
-  (t/matches? routes "/user/123/settings") ;;=> true
-  (t/matches? routes "/not-a-route")       ;;=> false
-
-  (t/->str (:my-route routes) {:id 123})   ;;=> "/usr/123/settings"
-  )
 ```
-
-You use nested maps to describe nested routes a la compojure's `context`:
-
-```clojure
-(t/route-map
- {:user ["/user/:id"
-         {:settings ["/settings" 
-                     {:acct "/acct"}]
-          :profile "/profile"
-          :home "/home"}]}) ;=> {:user                "/user/:id"
-                            ;    :user/home           "/user/:id/home"
-                            ;    :user/profile        "/user/:id/profile"
-                            ;    :user/settings       "/user/:id/settings"
-                            ;    :user/settings/acct  "/user/:id/settings/acct"}
-```
-
-Matching is straightforward:
-
-```clojure
-(t/matches? my-routemap "/user/123/settings") ;;=> true
-(t/match my-routemap "/user/123/settings")    ;;=> #object[trout.core.Route]
-```
-
 
 ## Route Syntax
 
@@ -315,7 +306,6 @@ Run tests with `lein doo node [once]`.
 Thanks to these fine projects:
 - [path-to-regexp](https://github.com/pillarjs/path-to-regexp)
 - [Compojure](https://github.com/weavejester/compojure)
-- [Schema](https://github.com/Prismatic/schema)
 
 ## (Un) License
 
