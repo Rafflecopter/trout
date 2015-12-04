@@ -52,13 +52,3 @@
       (are [x y] (= (t/handle! routes handlers x) y)
         "/foo/123" "-foo123"
         "/baz/456" "-bar456"))))
-
-
-(let [routes {:home (t/route "/home/:page-id"),
-              :user (t/route "/user/:user-id")}
-      handlers {:home #(js/alert (str "Welcome to page " (:page-id %)))
-                :user #(js/alert (str "Welcome, User " (:user-id %)))}]
-
-  (t/handle! routes handlers "/home/pricing")  ;;=> Welcome to page pricing
-  (t/handle! routes handlers "/user/abc-123")  ;;=> Welcome, User abc-123
-  )

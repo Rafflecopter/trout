@@ -124,23 +124,30 @@ Test multiple routes at once:
 Trout can call route handlers for you, provided a map of routes and a matching map of handlers. Handlers will be passed the parsed parameters as a map:
 
 ```clojure
-(let [routes {:home (t/route "/home/:page-id"),
-              :user (t/route "/user/:user-id")}
-      handlers {:home #(js/alert (str "Welcome to page " (:page-id %)))
-                :user #(js/alert (str "Welcome, User " (:user-id %)))}]
+(defn show-page [{:keys [page-id]}]
+  (js/alert (str "Welcome to " page-id " page")))
 
-  (t/handle! routes handlers "/home/pricing")  ;;=> Welcome to page pricing
-  (t/handle! routes handlers "/user/abc-123")  ;;=> Welcome, User abc-123
+(defn greet-user [{:keys [user-id]}]
+  (js/alert (str "Welcome, User " user-id)))
+
+
+(let [routes {:home (t/route "/home/:page-id")
+              :user (t/route "/user/:user-id")}
+      handlers {:home show-page
+                :user greet-user}]
+
+  (t/handle! routes handlers "/home/features") ;;=> Welcome to features page
+  (t/handle! routes handlers "/user/123")      ;;=> Welcome, User 123
   )
 ```
 
-You can use indexed collections instead of maps:
+If you prefer, you can use indexed collections instead of maps:
 
 ```clojure
 (let [routes [(t/route "/home/:page-id"),
               (t/route "/user/:user-id")]
-      handlers [#(js/alert (str "Welcome to page " (:page-id %)))
-                #(js/alert (str "Welcome, User " (:user-id %)))]]
+      handlers [show-page
+                greet-user]]
 
   (t/handle! routes handlers "/home/pricing")  ;;=> Welcome to page pricing
   (t/handle! routes handlers "/user/abc-123")  ;;=> Welcome, User abc-123
