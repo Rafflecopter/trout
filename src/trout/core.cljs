@@ -48,6 +48,15 @@
             str-conversions)
       s))
 
+(defn- find-match [{:as routes} path]
+  (loop [routes routes]
+    (let [[k rt] (first routes)
+          found (r/match rt path)]
+      (if (some? found)
+        ;; attach the key as meta so we can use it to find a handler
+        (with-meta found {:key k})
+        (recur (rest routes))))))
+
 (defn str->pathv [s]
   (let []
     (-> s
@@ -89,7 +98,10 @@
 
 
 (defn match [-route path]
-  (r/match -route path))
+  (cond (implements? r/IRoute -route) (r/match -route path)
+        (map? -route) (find-match -route path)
+        (coll? -route) (find-match (zipmap (range (count -route)) -route)
+                                   path)))
 
 (defn matches? [-route path]
   (some? (r/match -route path)))
@@ -104,5 +116,8 @@
          (catch js/Object e
            (.log js/console "Cannot navigate!")))))
 
-(defn route-map [m]
-  {})
+(defn handle! [routes handlers path]
+  (when-let [found (match routes path)]
+    (let [handler (handlers (-> found meta :key))]
+      (handler found))))
+
