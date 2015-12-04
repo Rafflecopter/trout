@@ -157,9 +157,6 @@
   IEditableCollection
   (-as-transient [_] (-as-transient pathv))
 
-  IReversible
-  (-rseq [_] (Route. (vec (-rseq pathv)) nil))
-
   IIterable
   (-iterator [this] (-iterator pathv))
   )

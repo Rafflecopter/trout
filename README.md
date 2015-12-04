@@ -70,9 +70,13 @@ Routes are vectors. Do vector things to them:
   (str (assoc route 1 :ident))  ;;=> "/user/:ident/settings"
   (str (pop route))             ;;=> "/user/:id"
 
-  ;; reverse gives you a new route, not a seq
-  (str (reverse route))         ;;=> "/settings/:id/user")
-  )
+  ;; seq functions return seqs. call (route) on them again:
+
+  (t/route (reverse route))            ;;=> /settings/:id/user
+  (t/route (rest route))               ;;=> :id/settings
+  (t/route (concat route
+                   (t/route "/foo")))  ;;=> /user/:id/settings/foo
+  ))
 ```
 
 #### Matching and Parsing
@@ -206,11 +210,6 @@ You can also match against `js/Location` objects:
   (t/matches? route loc) ;;=> true
   )
 ```    
-
-### Handlers
-
-```clojure
-```
 
 ## Route Syntax
 
