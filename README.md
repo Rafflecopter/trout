@@ -225,8 +225,8 @@ To use a hash-bang prefix ([more](#configuration))
 
 (let [route (t/route "/user/:id")]
   
-  (t/matches? route "/#/user/123")  ;;=> true
-  (t/->str route {:id "456"})       ;;=> "/#/user/456"
+  (t/matches? route "/#!/user/123")  ;;=> true
+  (t/->str route {:id "456"})        ;;=> "/#!/user/456"
 )
 ```
 
