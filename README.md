@@ -214,9 +214,21 @@ You can also match against `js/Location` objects:
 (let [route (t/route "/user/:id")
       loc (.-location js/document)] ;; href = "http://site.com/user/123"
 
-  (t/matches? route loc) ;;=> true
+  (t/matches? route loc)  ;;=> true
   )
-```    
+```
+
+To use a hash-bang prefix ([more](#configuration)) 
+
+```clojure
+(set! trout.settings/*prefix* "#!")
+
+(let [route (t/route "/user/:id")]
+  
+  (t/matches? route "/#/user/123")  ;;=> true
+  (t/->str route {:id "456"})       ;;=> "/#/user/456"
+)
+```
 
 ## Route Syntax
 
@@ -298,6 +310,9 @@ You can configure various aspects of Trout by `set!`ing the variables in `trout.
 ;; A function that takes a path string, and presumably side-effects
 (set! ts/*navigator* (fn [path-str]
                        (.replace js/location path-str)))
+
+;; A (string) path segment to expect on inputs & include in outputs
+(set! ts/*prefix* nil)
 ```
 
 ## Development
