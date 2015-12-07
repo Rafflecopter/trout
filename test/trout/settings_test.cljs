@@ -35,3 +35,10 @@
   (testing "Setting navigator affects navigate!"
     (binding [cfg/*navigator* #(str "foo" "bar")]
       (is (= (t/navigate! (t/route "/foo")) "foobar")))))
+
+(deftest set-prefix
+  (testing "Changing prefix affects input/output"
+    (binding [cfg/*prefix* "#"]
+      (let [route (t/route "/user/:id")]
+        (is (true? (t/matches? route "/#/user/123")))
+        (is (= (t/->str route {:id "123"}) "/#/user/123"))))))

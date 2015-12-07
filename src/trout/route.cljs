@@ -9,6 +9,11 @@
     (str s "(?:" cfg/*path-separator* "(?=$))?")
     s))
 
+(defn- prefixed [pathv]
+  (if cfg/*prefix*
+    (vec (cons cfg/*prefix* pathv))
+    pathv))
+
 (defn- sep+ [& xs]
   (str cfg/*path-separator* (apply str xs)))
 
@@ -49,6 +54,7 @@
 
 (defn pathv->regexp [pathv]
   (->> pathv
+       (prefixed)
        (#(map segment->pattern %))
        (apply str)
        (with-trailing-slash)
@@ -64,7 +70,7 @@
 (deftype Route [pathv ^:mutable __regex]
   Object
   (toString [_]
-    (str cfg/*path-separator* (string/join cfg/*path-separator* pathv)))
+    (str cfg/*path-separator* (string/join cfg/*path-separator* (prefixed pathv))))
   (equiv [_ other]
     (-equiv pathv other))
 
@@ -81,6 +87,7 @@
         r)))
   (path-str [this args]
     (let [args (or args {})
+          pathv (prefixed pathv)
           names (pathv->varnames pathv)
           segnames (map vector pathv names) ;; [[segment varname], ...]
           ->str (partial gen/segment->str args)]
