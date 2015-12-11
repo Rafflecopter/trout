@@ -2,11 +2,17 @@
   (:require [cljs.test :as test :refer-macros [deftest testing is are]]
             [clojure.walk :refer [postwalk]]
             [trout.core :as t]
-            [trout.route :as tr]))
+            [trout.route :as tr]
+            [cemerick.url :as url]))
 
 
 (defn- un-rx [x]
   (postwalk #(if (regexp? %) (.-source %) %) x))
+
+(defn- location [x]
+  (let [a (.createElement js/document "a")]
+    (set! (.-href a) x)
+    a))
 
 
 (deftest route-creation
@@ -52,3 +58,19 @@
       (are [x y] (= (t/handle! routes handlers x) y)
         "/foo/123" "-foo123"
         "/baz/456" "-bar456"))))
+
+(deftest url+location
+  (testing "Properly converts URL records into strings"
+    (are [x y] (= x (t/url->str (url/url y)))
+      "/#/user/123"     "http://test.com/#/user/123"
+      "/#/user/123"     "http://test.com#/user/123"
+      "/#/user/123"     "https://test.com#/user/123"
+      "/a/b/#/user/123" "http://test.com/a/b/#/user/123"
+      "/a/b/#/user/123" "http://test.com/a/b#/user/123"))
+  (testing "Properly converts Location objects into strings"
+    (are [x y] (= x (t/location->str (location y)))
+      "/#/user/123"     "http://test.com/#/user/123"
+      "/#/user/123"     "http://test.com#/user/123"
+      "/#/user/123"     "https://test.com#/user/123"
+      "/a/b/#/user/123" "http://test.com/a/b/#/user/123"
+      "/a/b/#/user/123" "http://test.com/a/b#/user/123")))

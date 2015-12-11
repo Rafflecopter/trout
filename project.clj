@@ -41,7 +41,8 @@
 
   :aliases {"clean-build" ["do" "clean," "cljsbuild" "once"]
             "clean-repl" ["do" "clean-build," "repl"]
-            "test" ["doo" "phantom" "test" "once"]}
+            "test" ["doo" "phantom" "test" "once"]
+            "clean-test" ["do" "clean," "test"]}
 
   :doo {:build "test"}
   )

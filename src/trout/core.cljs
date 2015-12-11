@@ -1,6 +1,7 @@
 (ns trout.core
   (:require [clojure.string :as string]
             [trout.settings :as cfg]
+            [cemerick.url :as url]
             [trout.route :as r]))
 
 
@@ -31,6 +32,13 @@
 
 
 ;; Helpers
+
+(defn- location? [x]
+  (and (object? x)
+       (.-href x)))
+
+(defn- url? [x]
+  (instance? url/URL x))
 
 (defn- separator-regexp []
   (re-pattern (string/replace cfg/*path-separator* #"([.+*?=^!:${}()\[\]|\/])" "\\$1")))
@@ -86,22 +94,31 @@
 
         vec)))
 
+(defn url->str [url]
+  (let [path (as-> (:path url) p (when-not (= "/" p) p))]
+    (str path "/#" (:anchor url))))
+
+(defn location->str [loc]
+  (url->str (url (.-href loc))))
+
 
 ;;;; API
 
 (defn route [path]
   (cond
-    (vector? path) (r/Route. path nil)
-    (seq? path) (r/Route. (vec path) nil)
-    (string? path) (r/Route. (str->pathv path) nil)
+    (vector? path)   (r/Route. path nil)
+    (seq? path)      (r/Route. (vec path) nil)
+    (string? path)   (r/Route. (str->pathv path) nil)
     :else (throw (str "Routes can only be made from strings or collections. Instead, path is a " (type path)))))
 
 
 (defn match [-route path]
-  (cond (implements? r/IRoute -route) (r/match -route path)
-        (map? -route) (find-match -route path)
-        (coll? -route) (find-match (zipmap (range (count -route)) -route)
-                                   path)))
+  (let [path (cond (url? path) (url->str path)
+                   (location? path) (location->str path)
+                   :else path)]
+    (cond (implements? r/IRoute -route) (r/match -route path)
+          (map? -route) (find-match -route path)
+          (coll? -route) (find-match (zipmap (range (count -route)) -route) path))))
 
 (defn matches? [-route path]
   (some? (r/match -route path)))
@@ -121,3 +138,6 @@
     (let [handler (handlers (-> found meta :key))]
       (handler found))))
 
+;; expose this for easy usage
+
+(def url url/url)

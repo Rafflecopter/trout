@@ -205,7 +205,7 @@ Trout can change the browser's location for you:
 To match against a whole URL instead of a relative path:
 
 ```clojure
-(t/matches? route "http://site.com/user/123" :url true)
+(t/matches? route (t/url "http://site.com/user/123"))
 ```
 
 You can also match against `js/Location` objects:
@@ -316,8 +316,6 @@ You can configure various aspects of Trout by `set!`ing the variables in `trout.
 ```
 
 ## Development
-
-#### REPL
 
 From a `lein repl` (or `cider-jack-in`), choose from:
 
