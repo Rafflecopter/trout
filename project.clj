@@ -10,30 +10,38 @@
    [org.clojure/clojurescript  "1.7.170"]
    [com.cemerick/url           "0.1.1"]]
 
-
   :plugins
   [[lein-cljsbuild "1.1.1"]]
 
   :profiles
-  {:dev {:source-paths ["dev/" "src/"]
+  {:dev {:source-paths ["dev" "src"]
          :dependencies [[com.cemerick/piggieback "0.2.1"]
-                        [weasel "0.7.0"]
+                        [org.clojure/tools.nrepl "0.2.11"]
                         [lein-doo "0.1.6-SNAPSHOT"]]
-         :plugins [[lein-doo "0.1.6-SNAPSHOT"]]
+         :plugins [[lein-doo "0.1.6-SNAPSHOT"]
+                   [com.cemerick/austin "0.1.6"]]
          :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
 
   :cljsbuild
-  {:builds [{:id "test"
-             :source-paths ["src/"]
-             ;;:notify-command "TODO: run tests here"
-             :compiler {:output-to "target/js/test.js"
-                        :optimizations :whitespace
-                        :pretty-print true}}
-            {:id "node-test"
-             :source-paths ["src/" "test/"]
-             :compiler {:output-to "target/js/test.js"
-                        :output-dir "target"
-                        :main trout.test-runner
-                        :target :nodejs}}]}
+  {:builds
+   [{:id "dev"
+     :source-paths ["src"]
+     :compiler {:target :nodejs
+                :optimizations :none
+                :output-to "target/js/dev/trout.js"
+                :output-dir "target/js/dev/out"}}
+    {:id "test"
+     :source-paths ["src" "test"]
+     :compiler {:optimizations :whitespace
+                :output-to "target/js/test/test.js"
+                :output-dir "target/js/test/out"
+                :main trout.test-runner}}]}
 
-  :doo {:build "node-test"})
+  :clean-targets ^{:protect false} ["out" "target" "resources" ".cljs_node_repl"]
+
+  :aliases {"clean-build" ["do" "clean," "cljsbuild" "once"]
+            "clean-repl" ["do" "clean-build," "repl"]
+            "test" ["doo" "phantom" "test" "once"]}
+
+  :doo {:build "test"}
+  )

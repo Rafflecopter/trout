@@ -11,7 +11,11 @@ pom.xml.asc
 .hg/
 
 /dev-resources
+/resources
+/target
+/out
 /.cljs_node_repl
+/.cljs_rhino_repl
 
 \#*\#
 .\#*

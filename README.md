@@ -317,9 +317,22 @@ You can configure various aspects of Trout by `set!`ing the variables in `trout.
 
 ## Development
 
-Get a clj repl with `lein repl` and then a cljs repl with `(node-repl)` or `(ws-repl)` (browser)
+#### REPL
 
-Run tests with `lein doo node [once]`.
+From a `lein repl` (or `cider-jack-in`), choose from:
+
+```clojure
+;; Node repls are the easiest to work with
+(cljs-repl :node)
+
+;; Phantom repl works great for eval, but cider-load-[buffer|file] don't work,
+;; making the development workflow a bit clunky. But sometimes you need a browser:
+(cljs-repl :phantom)
+```
+
+Run tests with `lein test`. You'll need [phantom](http://phantomjs.org/) installed.
+
+Helpful lein aliases: `lein clean-build`, `lein clean-repl`
 
 
 ## Links

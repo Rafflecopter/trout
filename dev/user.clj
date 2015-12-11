@@ -1,19 +1,14 @@
 (ns user
-  (:require
-   [weasel.repl.websocket]
-   [cemerick.piggieback]
-   [cljs.repl :as repl]
-   [cljs.repl.node :as node]))
+  (:require [clojure.java.shell :refer [sh]]
+            [cemerick.piggieback :as pb]
+            [cljs.repl.node :as node]
+            [cemerick.austin :as au]))
 
-(defn ws-repl []
-  (cemerick.piggieback/cljs-repl
-   (weasel.repl.websocket/repl-env :ip "0.0.0.0" :port 9009)))
+(def opts
+  [:working-dir "target"])
 
-(defn node-repl []
-  (cemerick.piggieback/cljs-repl
-   (node/repl-env)
-   :output-dir ".cljs_node_repl"
-   :cache-analysis true
-   :source-map true))
-
-
+(defn cljs-repl [env]
+  (condp = env
+    :phantom (pb/cljs-repl (apply au/exec-env opts))
+    :node (pb/cljs-repl (apply node/repl-env opts)))
+  "Starting repl...")
