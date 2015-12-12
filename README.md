@@ -337,9 +337,7 @@ Helpful lein aliases: `lein clean-build`, `lein clean-repl`
 
 ## Links
 
-Thanks to these fine projects:
 - [path-to-regexp](https://github.com/pillarjs/path-to-regexp)
-- [Compojure](https://github.com/weavejester/compojure)
 
 ## (Un) License
 
