@@ -40,7 +40,7 @@ route matching/lookup library for ClojureScript that aims to be intuitive to use
 (def my-route (t/route "/user/:user-id/invoices/:invoice-id(inv-\d+)"))
 
 (t/matches? my-route "/user/abc123/invoices/inv-456") ;;=> true
-(t/match my-route "/user/abc123/invoices/inv-456")    ;;=> {:user-id "abc123", :invoice-id "456"}
+(t/match my-route "/user/abc123/invoices/inv-456")    ;;=> {:user-id "abc123", :invoice-id "inv-456"}
 
 (t/->str my-route {:user-id "xyz789"
                    :invoice-id "inv-123"})   ;;=> "/user/xyz789/invoices/inv-123
