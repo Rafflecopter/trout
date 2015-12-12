@@ -16,7 +16,7 @@ route matching/lookup library for ClojureScript that aims to be intuitive to use
 - No keeping track of routes for you; no macros necessary.
 - Routes can be "nested" a la compojure's `context`
 
-[![Clojars Project](http://clojars.org/trout/latest-version.svg)](http://clojars.org/trout)
+[<img src="http://clojars.org/trout/latest-version.svg" height=34>](http://clojars.org/trout)
 
 ## TL;DR
 
@@ -210,7 +210,7 @@ To match against a whole URL instead of a relative path:
 (t/matches? route (t/url "http://site.com/user/123"))
 ```
 
-You can also match against `js/Location` objects:
+You can also match against [Location](https://developer.mozilla.org/en-US/docs/Web/API/Location) objects:
 
 ```clojure
 (let [route (t/route "/user/:id")
@@ -219,6 +219,8 @@ You can also match against `js/Location` objects:
   (t/matches? route loc)  ;;=> true
   )
 ```
+
+> Note: Actually any javascript object with a `.-href` will do.
 
 To use a hash-bang prefix ([more](#configuration)) 
 
