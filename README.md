@@ -16,6 +16,8 @@ route matching/lookup library for ClojureScript that aims to be intuitive to use
 - No keeping track of routes for you; no macros necessary.
 - Routes can be "nested" a la compojure's `context`
 
+[![Clojars Project](http://clojars.org/trout/latest-version.svg)](http://clojars.org/trout)
+
 ## TL;DR
 
 ##### Syntax [...](#route-syntax)
