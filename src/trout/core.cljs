@@ -1,7 +1,7 @@
 (ns trout.core
   (:require [clojure.string :as string]
             [trout.settings :as cfg]
-            [cemerick.url :as url]
+            [cemerick.url :as curl]
             [trout.route :as r]))
 
 
@@ -38,7 +38,7 @@
        (.-href x)))
 
 (defn- url? [x]
-  (instance? url/URL x))
+  (instance? curl/URL x))
 
 (defn- separator-regexp []
   (re-pattern (string/replace cfg/*path-separator* #"([.+*?=^!:${}()\[\]|\/])" "\\$1")))
@@ -99,7 +99,7 @@
     (str path "/#" (:anchor url))))
 
 (defn location->str [loc]
-  (url->str (url (.-href loc))))
+  (url->str (curl/url (.-href loc))))
 
 
 ;;;; API
@@ -140,4 +140,4 @@
 
 ;; expose this for easy usage
 
-(def url url/url)
+(def url curl/url)
