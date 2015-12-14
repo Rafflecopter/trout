@@ -34,8 +34,7 @@
 ;; Helpers
 
 (defn- location? [x]
-  (and (object? x)
-       (.-href x)))
+  (some? (.-href x)))
 
 (defn- url? [x]
   (instance? curl/URL x))
