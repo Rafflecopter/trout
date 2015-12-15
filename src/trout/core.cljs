@@ -105,9 +105,10 @@
 
 (defn route [path]
   (cond
-    (vector? path)   (r/Route. path nil)
-    (seq? path)      (r/Route. (vec path) nil)
-    (string? path)   (r/Route. (str->pathv path) nil)
+    (instance? r/Route path) path
+    (vector? path)           (r/Route. path nil)
+    (seq? path)              (r/Route. (vec path) nil)
+    (string? path)           (r/Route. (str->pathv path) nil)
     :else (throw (str "Routes can only be made from strings or collections. Instead, path is a " (type path)))))
 
 

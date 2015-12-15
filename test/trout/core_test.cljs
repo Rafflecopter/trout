@@ -74,3 +74,8 @@
       "/#/user/123"     "https://test.com#/user/123"
       "/a/b/#/user/123" "http://test.com/a/b/#/user/123"
       "/a/b/#/user/123" "http://test.com/a/b#/user/123")))
+
+(deftest accept-route
+  (testing "(route) accepts a Route properly"
+    (is (false? (instance? tr/Route (.-pathv (t/route (t/route "/a/b"))))))))
+
