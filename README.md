@@ -14,7 +14,6 @@ route matching/lookup library for ClojureScript that aims to be intuitive to use
 - Routes are just vectors - even ones created via strings.<br>
   Extend & compose them to your heart's content.
 - No keeping track of routes for you; no macros necessary.
-- Routes can be "nested" a la compojure's `context`
 
 [<img src="http://clojars.org/trout/latest-version.svg" height=34>](http://clojars.org/trout)
 

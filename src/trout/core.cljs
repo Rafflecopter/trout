@@ -111,6 +111,9 @@
     (string? path)           (r/Route. (str->pathv path) nil)
     :else (throw (str "Routes can only be made from strings or collections. Instead, path is a " (type path)))))
 
+(defn route? [x]
+  (instance? r/Route ))
+
 
 (defn match [-route path]
   (let [path (cond (url? path) (url->str path)
