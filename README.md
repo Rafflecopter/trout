@@ -194,6 +194,8 @@ Modifiers like optional & repeat are respected:
 
 #### Miscellany
 
+##### Navigation
+
 Trout can change the browser's location for you:
 
 ```clojure
@@ -202,6 +204,8 @@ Trout can change the browser's location for you:
   (t/navigate! route {:id 123})  ;;=> document location will be ".../user/123"
   )
 ```
+
+##### Match Against...
 
 To match against a whole URL instead of a relative path:
 
@@ -221,6 +225,8 @@ You can also match against [Location](https://developer.mozilla.org/en-US/docs/W
 
 > Note: Actually any javascript object with a `.-href` will do.
 
+##### Common Patterns
+
 To use a hash-bang prefix ([more](#configuration)) 
 
 ```clojure
@@ -231,6 +237,16 @@ To use a hash-bang prefix ([more](#configuration))
   (t/matches? route "/#!/user/123")  ;;=> true
   (t/->str route {:id "456"})        ;;=> "/#!/user/456"
 )
+```
+
+##### Convenience Functions
+
+```clojure
+(str (t/concat "/user"
+               [:id]
+               "/settings/:page-id"
+               ["alerts"])
+;;=> "/user/:id/settings/:page-id/alerts
 ```
 
 ## Route Syntax
@@ -333,7 +349,7 @@ From a `lein repl` (or `cider-jack-in`), choose from:
 
 Run tests with `lein test`. You'll need [phantom](http://phantomjs.org/) installed.
 
-Helpful lein aliases: `lein clean-build`, `lein clean-repl`
+Helpful lein aliases: `lein clean-build`, `lein clean-repl`, `lein clean-test`
 
 
 ## Links

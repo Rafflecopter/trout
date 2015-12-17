@@ -79,3 +79,7 @@
   (testing "(route) accepts a Route properly"
     (is (false? (instance? tr/Route (.-pathv (t/route (t/route "/a/b"))))))))
 
+(deftest concat-routes
+  (testing "concat combines routes properly"
+    (is (= ["user" :id "settings" :page-id/+ "alerts" '*]
+           (t/concat "user" [:id] ["settings"] "/:page-id+" ["alerts"] "/*")))))

@@ -1,4 +1,5 @@
 (ns trout.core
+  (:refer-clojure :exclude [concat])
   (:require [clojure.string :as string]
             [trout.settings :as cfg]
             [cemerick.url :as curl]
@@ -112,7 +113,7 @@
     :else (throw (str "Routes can only be made from strings or collections. Instead, path is a " (type path)))))
 
 (defn route? [x]
-  (instance? r/Route ))
+  (instance? r/Route x))
 
 
 (defn match [-route path]
@@ -140,6 +141,13 @@
   (when-let [found (match routes path)]
     (let [handler (handlers (-> found meta :key))]
       (handler found))))
+
+
+;; Helpers
+
+(defn concat [& routes]
+  (route (apply clojure.core/concat (map route routes))))
+
 
 ;; expose this for easy usage
 
