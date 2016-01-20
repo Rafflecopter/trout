@@ -1,8 +1,3 @@
-```
-DO NOT USE IN PRODUCTION. Trout is a work in progress. Some things are missing/broken.
-```
-<br>
-
 <img src="http://f.cl.ly/items/0T1e2c243a1F1S2k1033/trout.svg" align=right width=200>
 
 # Trout
