@@ -5,7 +5,8 @@
             :url "http://unlicense.org"
             :comments "Do what you want"}
 
-  :deploy-repositories [["releases" {:url "https://clojars.org/repo/" :creds :gpg}]]
+  :repositories [["clojars" {:url "https://clojars.org/repo" :creds :gpg}]]
+  :deploy-repositories [["releases" :clojars]]
 
   :dependencies
   [[org.clojure/clojure        "1.7.0"]
