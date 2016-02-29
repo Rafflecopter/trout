@@ -63,7 +63,8 @@
       (if (some? found)
         ;; attach the key as meta so we can use it to find a handler
         (with-meta found {:key k})
-        (recur (rest routes))))))
+        (when (> (count routes) 1)
+          (recur (rest routes)))))))
 
 (defn str->pathv [s]
   (let []
@@ -120,9 +121,10 @@
   (let [path (cond (url? path) (url->str path)
                    (location? path) (location->str path)
                    :else path)]
-    (cond (implements? r/IRoute -route) (r/match -route path)
-          (map? -route) (find-match -route path)
-          (coll? -route) (find-match (zipmap (range (count -route)) -route) path))))
+    (when (some? path)
+     (cond (satisfies? r/IRoute -route) (r/match -route path)
+           (map? -route) (find-match -route path)
+           (coll? -route) (find-match (zipmap (range (count -route)) -route) path)))))
 
 (defn matches? [-route path]
   (some? (r/match -route path)))
