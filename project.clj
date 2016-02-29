@@ -5,6 +5,8 @@
             :url "http://unlicense.org"
             :comments "Do what you want"}
 
+  :deploy-repositories [["releases" :clojars]]
+
   :dependencies
   [[org.clojure/clojure        "1.7.0"]
    [org.clojure/clojurescript  "1.7.170"]
