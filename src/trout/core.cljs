@@ -127,7 +127,7 @@
            (coll? -route) (find-match (zipmap (range (count -route)) -route) path)))))
 
 (defn matches? [-route path]
-  (some? (r/match -route path)))
+  (some? (match -route path)))
 
 
 (defn ->str [-route & [{:as argv}]]
