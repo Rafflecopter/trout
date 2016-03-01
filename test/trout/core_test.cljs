@@ -113,3 +113,7 @@
         "/user/928ajaue" {:user-id "928ajaue"}
         "/org/jeje0101ksks/user/8kk282iaia" {:org-id "jeje0101ksks" 
                                              :user-id "8kk282iaia"}))))
+
+(deftest matches?
+  (testing "Calls trout.core/match"
+    (is (false? (t/matches? [(t/route "/foo")] "/aaa")))))
