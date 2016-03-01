@@ -14,7 +14,6 @@
     (set! (.-href a) x)
     a))
 
-
 (deftest route-creation
   (testing "(route x) creates correct routes based on input type"
     (let [correct (tr/Route. ["user" :id "settings" :page] nil)]
@@ -83,3 +82,34 @@
   (testing "concat combines routes properly"
     (is (= ["user" :id "settings" :page-id/+ "alerts" '*]
            (t/concat "user" [:id] ["settings"] "/:page-id+" ["alerts"] "/*")))))
+
+(deftest match-maps-and-colls
+  (testing "Correctly matches maps and other generic collections"
+    (let [routes {:foo (t/route "/foo")
+                  :user-home (t/route "/user/:user-id")
+                  :org-user-home (t/route "/org/:org-id/user/:user-id")}]
+      (are [x y] (= (t/match routes x) y)
+        "/foo"  {}
+        "/a/b"  nil
+        "/user/928ajaue" {:user-id "928ajaue"}
+        "/org/jeje0101ksks/user/8kk282iaia" {:org-id "jeje0101ksks" 
+                                             :user-id "8kk282iaia"}))
+    (let [routes [(t/route "/foo")
+                  (t/route "/user/:user-id")
+                  (t/route "/org/:org-id/user/:user-id")]]
+      (are [x y] (= (t/match routes x) y)
+        "/foo"  {}
+        "/a/b"  nil
+        "/user/928ajaue" {:user-id "928ajaue"}
+        "/org/jeje0101ksks/user/8kk282iaia" {:org-id "jeje0101ksks" 
+                                             :user-id "8kk282iaia"}))
+    
+    (let [routes #{(t/route "/foo")
+                   (t/route "/user/:user-id")
+                   (t/route "/org/:org-id/user/:user-id")}]
+      (are [x y] (= (t/match routes x) y)
+        "/foo"  {}
+        "/a/b"  nil
+        "/user/928ajaue" {:user-id "928ajaue"}
+        "/org/jeje0101ksks/user/8kk282iaia" {:org-id "jeje0101ksks" 
+                                             :user-id "8kk282iaia"}))))
