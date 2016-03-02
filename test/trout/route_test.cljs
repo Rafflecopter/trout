@@ -74,6 +74,7 @@
       "/foo/123"   ["foo" [:id #"(\d+)"]] {:id "123"}
       "/foo/123"   ["foo" #"(\d+)"]       {0 123}
       "/foo/123"   ["foo" '*]             {0 123}
+      "/"          []                     {}
       ))
   (testing "Correctly throws when generating strings with invalid arguments"
     (are [x y] (thrown? js/TypeError (tr/path-str (tr/Route. x nil) y))

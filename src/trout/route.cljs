@@ -91,7 +91,8 @@
           names (pathv->varnames pathv)
           segnames (map vector pathv names) ;; [[segment varname], ...]
           ->str (partial gen/segment->str args)]
-      (string/join (map ->str segnames))))
+      (let [s (string/join (map ->str segnames))]
+        (if-not (empty? s) s cfg/*path-separator*))))
   (match [this path]
     (when-let [found (re-matches (-regexp this) path)]
       (let [names (remove nil? (pathv->varnames pathv))
