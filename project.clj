@@ -1,4 +1,4 @@
-(defproject trout "0.1.3-SNAPSHOT"
+(defproject trout "0.1.3"
   :description "A readable 'routes as data' routing library for clojurescript"
   :url "https://github.com/Rafflecopter/trout"
   :license {:name "Unlicense"
