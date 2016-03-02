@@ -5,7 +5,7 @@
 Trout is a bi-directional "routes are data"
 route matching/lookup library for ClojureScript that aims to be intuitive to use.
 
-- Route [syntax](#route-syntax) inspired by Express, et al.
+- Route [syntax](#route-syntax) inspired by [path-to-regexp](https://github.com/pillarjs/path-to-regexp)
 - Routes are just vectors - even ones created via strings.<br>
   Extend & compose them to your heart's content.
 - No keeping track of routes for you; no macros necessary.
