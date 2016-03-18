@@ -5,12 +5,12 @@
 Trout is a bi-directional "routes are data"
 route matching/lookup library for ClojureScript that aims to be intuitive to use.
 
-- Route [syntax](#route-syntax) inspired by [path-to-regexp](https://github.com/pillarjs/path-to-regexp)
+- Route [syntax](#route-syntax) inspired by Node's [path-to-regexp](https://github.com/pillarjs/path-to-regexp) library
 - Routes are just vectors - even ones created via strings.<br>
   Extend & compose them to your heart's content.
 - No keeping track of routes for you; no macros necessary.
 
-[<img src="http://clojars.org/trout/latest-version.svg" height=34>](http://clojars.org/trout)
+[![Clojars Project](https://img.shields.io/clojars/v/trout.svg)](https://clojars.org/trout)
 
 ## TL;DR
 
