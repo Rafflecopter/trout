@@ -111,7 +111,8 @@
     (vector? path)           (r/Route. path nil)
     (seq? path)              (r/Route. (vec path) nil)
     (string? path)           (r/Route. (str->pathv path) nil)
-    :else (throw (str "Routes can only be made from strings or collections. Instead, path is a " (type path)))))
+    :else (throw (str "Routes can only be made from strings or collections. Instead, path is "
+                      (if (some? path) (str "a " (type path)) "nil")))))
 
 (defn route? [x]
   (instance? r/Route x))
