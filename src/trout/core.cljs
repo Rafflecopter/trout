@@ -140,10 +140,11 @@
          (catch js/Object e
            (.log js/console "Cannot navigate!")))))
 
-(defn handle! [routes handlers path]
-  (when-let [found (match routes path)]
+(defn handle! [routes handlers path & [not-found]]
+  (if-let [found (match routes path)]
     (let [handler (handlers (-> found meta :key))]
-      (handler found))))
+      (handler found))
+    (when not-found (not-found))))
 
 
 ;; Helpers

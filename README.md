@@ -150,6 +150,19 @@ If you prefer, you can use indexed collections instead of maps:
   )
 ```
 
+You can also provide a callback if the route isn't found:
+
+```clojure
+(defn not-found-handler []
+  (str "NOT FOUND!"))
+
+(let [routes [(t/route "/foo/:bar")]
+      handlers [#(str "handled" (:bar %))]]
+
+  (t/handle! routes handlers "/not/real" not-found-handler)  ;;=> NOT FOUND!
+  )
+```
+
 #### Generating Strings
 
 You can generate a string from a route + arguments:

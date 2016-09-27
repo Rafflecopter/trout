@@ -56,7 +56,13 @@
                     #(str "-bar" (:qux %))]]
       (are [x y] (= (t/handle! routes handlers x) y)
         "/foo/123" "-foo123"
-        "/baz/456" "-bar456"))))
+        "/baz/456" "-bar456")))
+  (testing "Calls not-found callback when route not found"
+    (let [routes [(t/route "/foo/:bar")]
+          handlers [#(str "handled " (:bar %))]]
+      (are [x y] (= (t/handle! routes handlers x #(str "NOT FOUND")) y)
+        "/notreal/123" "NOT FOUND"
+        "/foo/asdf" "handled asdf"))))
 
 (deftest url+location
   (testing "Properly converts URL records into strings"
