@@ -57,7 +57,11 @@
       (are [x y] (= (tr/match route x) y)
         "/test"  {0 "test"}
         "/a/b/c" {0 "a/b/c"}
-        ""       nil))))
+        ""       nil)))
+
+  (testing "ignores query params in route param capture"
+    (is (= (tr/match (tr/Route. [:foo] nil) "/test?query=param")
+           {:foo "test"}))))
 
 (deftest string-generation
   (testing "Correctly generates path strings from route + arguments"
