@@ -6,8 +6,11 @@
 
 (defn- with-trailing-slash [s]
   (if cfg/*allow-trailing-slashes*
-    (str s "(?:" cfg/*path-separator* "(?=$))?")
+    (str s "(?:" cfg/*path-separator* ")?")
     s))
+
+(defn- ignore-query-params [s]
+  (str s "(?:[^?]*)?"))
 
 (defn- prefixed [pathv]
   (if cfg/*prefix*
@@ -58,6 +61,7 @@
        (#(map segment->pattern %))
        (apply str)
        (with-trailing-slash)
+       (ignore-query-params)
        (#(str "^" % "$"))
        (re-pattern)))
 
